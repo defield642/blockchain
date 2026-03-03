@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Certificate Viewer</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+
+<body class="bg-light">
+<%- include('partials/navbar-partial.ejs') %>
+
+<div class="container cert-viewer">
+  <div class="row">
+    <div class="col-12">
+      <div class="cert-viewer-header">
+        <div>
+          <h2 class="section-title">Certificate</h2>
+          <div class="section-subtitle">
+            <%= cert.studentName %> • <%= cert.universityName %> • <%= cert.dateOfIssuing %>
+          </div>
+          <div class="file-meta">
+            <strong>File:</strong> <%= cert.certificateFileName %> • <%= cert.certificateFileMime %> • <%= Math.round((cert.certificateFileSize || 0) / 1024) %> KB
+          </div>
+        </div>
+        <div class="viewer-actions">
+          <% if (canDownload) { %>
+            <a class="btn btn-outline-success" href="/certificates/<%= cert._id %>/download">Download</a>
+          <% } %>
+          <% if (canDownload) { %>
+            <a class="btn btn-outline-success" href="/certificates/<%= cert._id %>/file" target="_blank" rel="noopener">Open Fullscreen</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if (!fileExists) { %>
+    <div class="alert alert-danger mt-3">Document not found.</div>
+  <% } else if (isPdf || isImage || isText) { %>
+    <div class="viewer-frame">
+      <% if (isPdf && !canDownload) { %>
+        <iframe src="/certificates/<%= cert._id %>/file#toolbar=0&navpanes=0&scrollbar=0" title="Certificate Document"></iframe>
+      <% } else { %>
+        <iframe src="/certificates/<%= cert._id %>/file" title="Certificate Document"></iframe>
+      <% } %>
+    </div>
+  <% } else if (isAudio) { %>
+    <div class="viewer-frame media-frame">
+      <audio controls src="/certificates/<%= cert._id %>/file"></audio>
+    </div>
+  <% } else if (isVideo) { %>
+    <div class="viewer-frame media-frame">
+      <video controls src="/certificates/<%= cert._id %>/file"></video>
+    </div>
+  <% } else if (isOffice) { %>
+    <div class="viewer-frame">
+      <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=<%= encodeURIComponent(fileUrl) %>" title="Office Document"></iframe>
+    </div>
+    <div class="alert alert-info mt-3">
+      If the preview does not load, the file may need to be publicly accessible. Use download instead.
+    </div>
+  <% } else { %>
+    <div class="alert alert-info mt-3">
+      This document format can't be previewed in the browser.
+    </div>
+    <div class="file-details">
+      <div><strong>File:</strong> <%= cert.certificateFileName %></div>
+      <div><strong>Type:</strong> <%= cert.certificateFileMime %></div>
+      <div class="mt-2">
+        <% if (canDownload) { %>
+          <a class="btn btn-primary" href="/certificates/<%= cert._id %>/download">Download</a>
+        <% } %>
+        <% if (canDownload) { %>
+          <a class="btn btn-outline-success" href="/certificates/<%= cert._id %>/file" target="_blank" rel="noopener">Open</a>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>

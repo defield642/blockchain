@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Blockchain Certificates</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+
+<body class="bg-light">
+<%- include('partials/navbar-partial.ejs') %>
+
+<div class="container cert-browse">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="section-title">All Issued Certificates</h2>
+      <p class="section-subtitle">Browse every certificate issued on the platform.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <form class="cert-search" method="GET" action="/certificates">
+        <input class="form-control" type="text" name="q" placeholder="Search by student or university" value="<%= filters.q %>">
+        <input class="form-control" type="text" name="university" placeholder="University" value="<%= filters.university %>">
+        <input class="form-control" type="text" name="major" placeholder="Major" value="<%= filters.major %>">
+        <input class="form-control" type="text" name="department" placeholder="Department" value="<%= filters.department %>">
+        <select class="form-control" name="sort">
+          <option value="newest" <%= filters.sort === "newest" ? "selected" : "" %>>Newest</option>
+          <option value="oldest" <%= filters.sort === "oldest" ? "selected" : "" %>>Oldest</option>
+          <option value="student" <%= filters.sort === "student" ? "selected" : "" %>>Student A–Z</option>
+          <option value="university" <%= filters.sort === "university" ? "selected" : "" %>>University A–Z</option>
+        </select>
+        <button class="btn btn-primary" type="submit">Search</button>
+        <a class="btn btn-outline-success" href="/certificates">Reset</a>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <h3 class="section-title">Featured</h3>
+    </div>
+  </div>
+  <div class="cert-row">
+    <% if (certs.length === 0) { %>
+      <div class="empty-state">No certificates issued yet.</div>
+    <% } %>
+    <% for (var i = 0; i < certs.length; i++) { %>
+      <a class="cert-card" href="/certificates/<%= certs[i]._id %>">
+        <div class="cert-card-body">
+          <div class="cert-card-title"><%= certs[i].studentName %></div>
+          <div class="cert-card-sub"><%= certs[i].universityName %></div>
+          <div class="cert-card-meta">Major: <%= certs[i].major %></div>
+          <div class="cert-card-meta">Dept: <%= certs[i].departmentName %></div>
+          <div class="cert-card-meta">Issued: <%= certs[i].dateOfIssuing %></div>
+          <div class="cert-card-file"><%= certs[i].certificateFileName %></div>
+        </div>
+      </a>
+    <% } %>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <h3 class="section-title">By University</h3>
+    </div>
+  </div>
+  <% for (var u = 0; u < grouped.byUniversity.length; u++) { %>
+    <div class="row">
+      <div class="col-12">
+        <h5 class="section-subtitle"><%= grouped.byUniversity[u].name %></h5>
+      </div>
+    </div>
+    <div class="cert-row">
+      <% for (var j = 0; j < grouped.byUniversity[u].certs.length; j++) { %>
+        <a class="cert-card" href="/certificates/<%= grouped.byUniversity[u].certs[j]._id %>">
+          <div class="cert-card-body">
+            <div class="cert-card-title"><%= grouped.byUniversity[u].certs[j].studentName %></div>
+            <div class="cert-card-sub"><%= grouped.byUniversity[u].certs[j].universityName %></div>
+            <div class="cert-card-meta">Major: <%= grouped.byUniversity[u].certs[j].major %></div>
+            <div class="cert-card-meta">Dept: <%= grouped.byUniversity[u].certs[j].departmentName %></div>
+            <div class="cert-card-meta">Issued: <%= grouped.byUniversity[u].certs[j].dateOfIssuing %></div>
+            <div class="cert-card-file"><%= grouped.byUniversity[u].certs[j].certificateFileName %></div>
+          </div>
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+
+  <div class="row">
+    <div class="col-12">
+      <h3 class="section-title">By Major</h3>
+    </div>
+  </div>
+  <% for (var m = 0; m < grouped.byMajor.length; m++) { %>
+    <div class="row">
+      <div class="col-12">
+        <h5 class="section-subtitle"><%= grouped.byMajor[m].name %></h5>
+      </div>
+    </div>
+    <div class="cert-row">
+      <% for (var k = 0; k < grouped.byMajor[m].certs.length; k++) { %>
+        <a class="cert-card" href="/certificates/<%= grouped.byMajor[m].certs[k]._id %>">
+          <div class="cert-card-body">
+            <div class="cert-card-title"><%= grouped.byMajor[m].certs[k].studentName %></div>
+            <div class="cert-card-sub"><%= grouped.byMajor[m].certs[k].universityName %></div>
+            <div class="cert-card-meta">Major: <%= grouped.byMajor[m].certs[k].major %></div>
+            <div class="cert-card-meta">Dept: <%= grouped.byMajor[m].certs[k].departmentName %></div>
+            <div class="cert-card-meta">Issued: <%= grouped.byMajor[m].certs[k].dateOfIssuing %></div>
+            <div class="cert-card-file"><%= grouped.byMajor[m].certs[k].certificateFileName %></div>
+          </div>
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>

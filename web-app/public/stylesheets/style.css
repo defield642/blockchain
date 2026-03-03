@@ -1,0 +1,398 @@
+/*
+ * Copyright 2015 IBM Corp. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the “License”);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an “AS IS” BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* style.css
+ * This file provides css styles.
+ */
+
+/* Move down content because we have a fixed navbar that is 3.5rem tall */
+body {
+  padding-top: 3.5rem;
+  background: repeating-linear-gradient(
+          135deg,
+          #f5fff7 0px,
+          #f5fff7 24px,
+          #ffffff 24px,
+          #ffffff 48px
+  );
+  color: #1f2a22;
+}
+
+.jumbotron {
+  margin-bottom: 3rem;
+}
+
+.form-all {
+  margin-top: 3rem;
+}
+.inline {
+  /*display: inline;*/
+  color: rgba(255,255,255,.5);
+}
+.modal-body{
+  word-wrap: break-word;
+}
+
+.form-check {
+  margin-bottom: .5rem;
+}
+
+.cert-container {
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  padding-top: .4rem;
+  padding-bottom: .4rem;
+}
+
+.upper-row{
+  margin-bottom: 1.5rem;
+}
+.middle-row{
+  margin-bottom: 1.5rem;
+}
+
+.list-group li {
+  list-style: none;
+}
+.panel-info, .panel-rating, .panel-more1 {
+  float: left;
+  margin: 0 10px;
+}
+
+.tab-width {
+  width: 300px;
+}
+
+.tab-width a {
+  color: #acadaf;
+}
+
+.nav-item a {
+  color: #acadaf;
+}
+
+.navbar {
+  background-color: #0f6f3d !important;
+}
+
+.navbar-brand,
+.navbar .nav-link {
+  color: #e7ffef !important;
+}
+
+.navbar .nav-link:hover {
+  color: #ffffff !important;
+}
+
+.btn-primary {
+  background-color: #18a957;
+  border-color: #148a48;
+}
+
+.btn-primary:hover {
+  background-color: #12934a;
+  border-color: #0f7a3e;
+}
+
+.btn-outline-success {
+  color: #148a48;
+  border-color: #148a48;
+}
+
+.btn-outline-success:hover {
+  background-color: #148a48;
+  border-color: #148a48;
+}
+
+.card {
+  border: 1px solid #d5efdd;
+  box-shadow: 0 6px 24px rgba(20, 90, 50, 0.08);
+}
+
+.section-title {
+  color: #0f6f3d;
+  font-weight: 700;
+}
+
+.section-subtitle {
+  color: #4c6b55;
+  margin-bottom: 1rem;
+}
+
+.cert-browse {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.cert-row {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.cert-search {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr auto auto;
+  gap: 0.75rem;
+  margin: 1.5rem 0 2rem;
+}
+
+@media (max-width: 992px) {
+  .cert-search {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .cert-search {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cert-card {
+  min-width: 260px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1rem;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #d5efdd;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cert-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(20, 90, 50, 0.15);
+  text-decoration: none;
+}
+
+.cert-card-title {
+  font-weight: 700;
+  color: #0f6f3d;
+}
+
+.cert-card-sub {
+  font-size: 0.95rem;
+  color: #365140;
+  margin-bottom: 0.5rem;
+}
+
+.cert-card-meta {
+  font-size: 0.85rem;
+  color: #4c6b55;
+}
+
+.cert-card-file {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #0f6f3d;
+}
+
+.cert-viewer {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.cert-viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.viewer-frame {
+  margin-top: 1.5rem;
+  border: 1px solid #d5efdd;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.viewer-frame iframe {
+  width: 100%;
+  height: 80vh;
+  border: 0;
+}
+
+.viewer-frame.media-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  border: 1px solid #d5efdd;
+  padding: 24px;
+}
+
+.viewer-frame.media-frame audio,
+.viewer-frame.media-frame video {
+  width: 100%;
+  max-width: 960px;
+}
+
+.file-details {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #d5efdd;
+  border-radius: 12px;
+}
+
+.empty-state {
+  padding: 2rem;
+  background: #ffffff;
+  border: 1px dashed #b7d7c1;
+  border-radius: 12px;
+  color: #4c6b55;
+}
+
+/* Center align the text within the three columns below the carousel */
+.marketing .col-lg-4 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.marketing h2 {
+  font-weight: 400;
+}
+.marketing .col-lg-4 p {
+  margin-right: .75rem;
+  margin-left: .75rem;
+}
+
+
+/* Featurettes
+------------------------- */
+
+
+/* Thin out the marketing headings */
+.featurette-heading {
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -.05rem;
+}
+
+#jumbotron-index {
+  margin-top: 5rem;
+}
+
+.hero {
+  padding: 5rem 0 3rem;
+  background: linear-gradient(120deg, #e8fff0 0%, #ffffff 65%);
+}
+
+.hero-title {
+  font-weight: 800;
+  color: #0f6f3d;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  color: #3f5b48;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(20, 90, 50, 0.12);
+}
+
+.action-card {
+  margin-bottom: 2rem;
+}
+
+.action-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #d5efdd;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(20, 90, 50, 0.1);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+
+/* Loader
+------------------------- 
+/*!* Center the loader *!*/
+/*#loader {*/
+/*  position: absolute;*/
+/*  left: 50%;*/
+/*  top: 50%;*/
+/*  z-index: 1;*/
+/*  margin: -75px 0 0 -75px;*/
+/*  border: 16px solid #f3f3f3;*/
+/*  border-radius: 50%;*/
+/*  border-top: 16px solid #007aff;*/
+/*  width: 120px;*/
+/*  height: 120px;*/
+/*  -webkit-animation: spin 2s linear infinite;*/
+/*  animation: spin 2s linear infinite;*/
+/*}*/
+
+/*@-webkit-keyframes spin {*/
+/*  0% { -webkit-transform: rotate(0deg); }*/
+/*  100% { -webkit-transform: rotate(360deg); }*/
+/*}*/
+
+/*@keyframes spin {*/
+/*  0% { transform: rotate(0deg); }*/
+/*  100% { transform: rotate(360deg); }*/
+/*}*/
+
+/*!* Add animation to "page content" *!*/
+/*.animate-bottom {*/
+/*  position: relative;*/
+/*  -webkit-animation-name: animatebottom;*/
+/*  -webkit-animation-duration: 1s;*/
+/*  animation-name: animatebottom;*/
+/*  animation-duration: 1s*/
+/*}*/
+
+/*@-webkit-keyframes animatebottom {*/
+/*  from { bottom:-100px; opacity:0 }*/
+/*  to { bottom:0px; opacity:1 }*/
+/*}*/
+
+/*@keyframes animatebottom {*/
+/*  from{ bottom:-100px; opacity:0 }*/
+/*  to{ bottom:0; opacity:1 }*/
+/*}*/
+
+td {
+  vertical-align: bottom;
+}

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Blockchain flow diagram">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#e9fff0"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="520" rx="24" fill="url(#bg)" />
+
+  <g font-family="Arial, sans-serif" font-size="16" fill="#0f6f3d">
+    <text x="40" y="60" font-size="20" font-weight="700">Certificate Issuance Flow</text>
+  </g>
+
+  <g fill="#ffffff" stroke="#0f6f3d" stroke-width="2">
+    <rect x="60" y="120" width="220" height="120" rx="16"/>
+    <rect x="340" y="120" width="220" height="120" rx="16"/>
+    <rect x="620" y="120" width="220" height="120" rx="16"/>
+
+    <rect x="200" y="320" width="220" height="120" rx="16"/>
+    <rect x="480" y="320" width="220" height="120" rx="16"/>
+  </g>
+
+  <g font-family="Arial, sans-serif" font-size="15" fill="#1f2a22">
+    <text x="90" y="160" font-weight="700">University</text>
+    <text x="90" y="185">Issues certificate</text>
+    <text x="90" y="205">Uploads document</text>
+
+    <text x="370" y="160" font-weight="700">Blockchain</text>
+    <text x="370" y="185">Stores hashes</text>
+    <text x="370" y="205">Proves integrity</text>
+
+    <text x="650" y="160" font-weight="700">Student</text>
+    <text x="650" y="185">Receives certificate</text>
+    <text x="650" y="205">Shares proof</text>
+
+    <text x="230" y="360" font-weight="700">Verifier</text>
+    <text x="230" y="385">Views certificate</text>
+    <text x="230" y="405">Checks proof</text>
+
+    <text x="510" y="360" font-weight="700">Public Listing</text>
+    <text x="510" y="385">Browse issued docs</text>
+    <text x="510" y="405">Open in viewer</text>
+  </g>
+
+  <g stroke="#18a957" stroke-width="3" fill="none">
+    <path d="M280 180 H340"/>
+    <path d="M560 180 H620"/>
+    <path d="M450 240 V320"/>
+    <path d="M450 240 V280 C450 300 430 320 420 320"/>
+    <path d="M450 240 V280 C450 300 470 320 480 320"/>
+  </g>
+
+  <g fill="#18a957">
+    <circle cx="340" cy="180" r="5"/>
+    <circle cx="620" cy="180" r="5"/>
+    <circle cx="450" cy="320" r="5"/>
+    <circle cx="420" cy="320" r="5"/>
+    <circle cx="480" cy="320" r="5"/>
+  </g>
+</svg>
