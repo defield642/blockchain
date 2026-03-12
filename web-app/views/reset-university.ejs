@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Blockchain Certificate</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+
+<body class="bg-light rainbow-page">
+
+<%- include('partials/navbar-partial.ejs') %>
+
+
+<div class="row justify-content-center form-all">
+    <div class="col-md-6">
+        <div class="card">
+            <header class="card-header">
+                <h4 class="card-title mt-2">Reset university password</h4>
+            </header>
+            <article class="card-body">
+                <% if (typeof error !== "undefined") { %>
+                    <div class="alert alert-danger"><%= error %></div>
+                <% } %>
+                <% if (typeof info !== "undefined") { %>
+                    <div class="alert alert-info"><%= info %></div>
+                <% } %>
+                <% if (typeof success !== "undefined") { %>
+                    <div class="alert alert-success"><%= success %></div>
+                <% } %>
+
+                <div class="mb-3 text-muted">Enter your university email and send code.</div>
+                <form action="/university/reset/request" method="POST" class="reset-section" data-stage="email">
+                    <div class="form-group">
+                        <userName>Email</userName>
+                        <input name="email" required type="text" class="form-control required-placeholder" placeholder="required" value="<%= typeof email !== 'undefined' ? email : '' %>">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-success btn-block">Send Code</button>
+                    </div>
+                </form>
+
+                <form action="/university/reset/confirm" method="POST" class="reset-section" data-stage="code">
+                    <div class="mb-3 text-muted">Code will expire in 15 minutes.</div>
+                    <div class="form-group">
+                        <userName>Email</userName>
+                        <input name="email" required type="text" class="form-control required-placeholder" placeholder="required" value="<%= typeof email !== 'undefined' ? email : '' %>">
+                    </div>
+                    <div class="form-group">
+                        <userName>Reset Code</userName>
+                        <input name="code" required type="text" class="form-control required-placeholder" placeholder="required">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">Verify Code</button>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="button" class="btn btn-link p-0" id="resendCodeBtn">Resend Code</button>
+                    </div>
+                </form>
+
+                <form action="/university/reset/confirm" method="POST" class="reset-section" data-stage="password">
+                    <div class="mb-3 text-muted">Set your new password.</div>
+                    <div class="form-group">
+                        <userName>Email</userName>
+                        <input name="email" required type="text" class="form-control required-placeholder" placeholder="required" value="<%= typeof email !== 'undefined' ? email : '' %>">
+                    </div>
+                    <div class="form-group">
+                        <userName>Reset Code</userName>
+                        <input name="code" required type="text" class="form-control required-placeholder" placeholder="required">
+                    </div>
+                    <div class="form-group">
+                        <userName>New Password</userName>
+                        <div class="input-group">
+                            <input id="reset-new-password" name="password" required type="password" class="form-control required-placeholder" placeholder="required">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" data-password-toggle="reset-new-password">👁</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <userName>Confirm Password</userName>
+                        <div class="input-group">
+                            <input id="reset-confirm-password" name="confirmPassword" required type="password" class="form-control required-placeholder" placeholder="required">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" data-password-toggle="reset-confirm-password">👁</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">Reset Password</button>
+                    </div>
+                </form>
+
+                <div class="reset-section text-center" data-stage="success">
+                    <div class="alert alert-success">Password reset successfully.</div>
+                    <a class="btn btn-primary btn-block" href="/university/login">Go To Login</a>
+                </div>
+            </article>
+            <div class="border-top card-body text-center">Back to <a href="/university/login">login</a></div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script src="/js/password-toggle.js"></script>
+<script src="/js/register.js"></script>
+<script>
+  (function () {
+    var stage = "<%= typeof stage !== 'undefined' ? stage : 'email' %>";
+    var sections = document.querySelectorAll('.reset-section');
+    sections.forEach(function(section) {
+      section.style.display = section.getAttribute('data-stage') === stage ? 'block' : 'none';
+    });
+    if (stage === "success") {
+      setTimeout(function () {
+        window.location.href = "/university/login";
+      }, 1500);
+    }
+
+    var resendBtn = document.getElementById('resendCodeBtn');
+    if (resendBtn) {
+      resendBtn.addEventListener('click', function () {
+        var emailInput = document.querySelector('[data-stage=\"code\"] input[name=\"email\"]');
+        var email = emailInput ? emailInput.value : '';
+        if (!email) {
+          return;
+        }
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/university/reset/request';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'email';
+        input.value = email;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+      });
+    }
+
+    var error = "<%= typeof error !== 'undefined' ? error.replace(/\"/g, '\\\"') : '' %>";
+    if (error === "Passwords do not match.") {
+      alert(error);
+    }
+  })();
+</script>

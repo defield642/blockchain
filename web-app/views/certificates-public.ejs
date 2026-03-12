@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Blockchain Certificates</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+
+<body class="bg-light rainbow-page">
+<%- include('partials/navbar-partial.ejs') %>
+
+<div class="container cert-browse">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="section-title">All Issued Certificates</h2>
+      <p class="section-subtitle">Browse every certificate issued on the platform.</p>
+      <% const recruitStatusValue = typeof recruitStatus !== "undefined" ? recruitStatus : ""; %>
+      <% if (recruitStatusValue === "sent") { %>
+        <div class="alert alert-success">Message sent.</div>
+      <% } else if (recruitStatusValue === "invalid") { %>
+        <div class="alert alert-danger">Error: Enter a valid employer email.</div>
+      <% } else if (recruitStatusValue === "message") { %>
+        <div class="alert alert-danger">Error: Enter a message.</div>
+      <% } else if (recruitStatusValue === "missing") { %>
+        <div class="alert alert-danger">Error: Certificate not found.</div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <form class="cert-search" method="GET" action="/certificates">
+        <input class="form-control" type="text" name="q" placeholder="Search by student or university" value="<%= filters.q %>">
+        <input class="form-control" type="text" name="university" placeholder="University" value="<%= filters.university %>">
+        <input class="form-control" type="text" name="major" placeholder="Major" value="<%= filters.major %>">
+        <input class="form-control" type="text" name="department" placeholder="Department" value="<%= filters.department %>">
+        <select class="form-control" name="sort">
+          <option value="newest" <%= filters.sort === "newest" ? "selected" : "" %>>Newest</option>
+          <option value="oldest" <%= filters.sort === "oldest" ? "selected" : "" %>>Oldest</option>
+          <option value="student" <%= filters.sort === "student" ? "selected" : "" %>>Student A–Z</option>
+          <option value="university" <%= filters.sort === "university" ? "selected" : "" %>>University A–Z</option>
+        </select>
+        <button class="btn btn-primary" type="submit">Search</button>
+        <a class="btn btn-outline-success" href="/certificates">Reset</a>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <h3 class="section-title">Featured</h3>
+    </div>
+  </div>
+  <div class="cert-row">
+    <% if (certs.length === 0) { %>
+      <div class="empty-state">No certificates issued yet.</div>
+    <% } %>
+    <% for (var i = 0; i < certs.length; i++) { %>
+      <div class="cert-card-wrapper">
+        <a class="cert-card" href="<%= (certs[i].profile && certs[i].profile.profileCode) ? ('/profile/' + certs[i].profile.profileCode) : ('/certificates/' + certs[i]._id) %>">
+          <div class="cert-card-body">
+            <div class="cert-card-title"><%= certs[i].studentName %></div>
+            <div class="cert-card-sub"><%= certs[i].universityName %></div>
+            <div class="cert-card-meta">Major: <%= certs[i].major %></div>
+            <div class="cert-card-meta">Dept: <%= certs[i].departmentName %></div>
+            <div class="cert-card-meta">Issued: <%= certs[i].dateOfIssuing %></div>
+            <div class="cert-card-file"><%= certs[i].certificateFileName %></div>
+          </div>
+        </a>
+        <div class="cert-card-footer">
+          <% if (certs[i].profile) { %>
+            <div class="cert-profile">
+              <a class="profile-avatar" href="/profile/<%= certs[i].profile.profileCode %>">
+                <% if (certs[i].profile.profileImagePath) { %>
+                  <img src="/student/profile/image?email=<%= certs[i].studentEmail %>" alt="Profile">
+                <% } else { %>
+                  <span class="avatar-initials"><%= (certs[i].profile.displayName || certs[i].studentName || '').slice(0,1) %></span>
+                <% } %>
+              </a>
+              <div class="ml-2 font-weight-bold"><a href="/profile/<%= certs[i].profile.profileCode %>"><%= certs[i].profile.displayName || certs[i].studentName %></a></div>
+            </div>
+            <div id="profile-links-<%= i %>" class="collapse mt-2">
+              <% if (certs[i].profile.githubLink) { %><div><a href="<%= certs[i].profile.githubLink %>" target="_blank" rel="noopener">GitHub</a></div><% } %>
+              <% if (certs[i].profile.linkedinLink) { %><div><a href="<%= certs[i].profile.linkedinLink %>" target="_blank" rel="noopener">LinkedIn</a></div><% } %>
+              <% if (certs[i].profile.portfolioLink) { %><div><a href="<%= certs[i].profile.portfolioLink %>" target="_blank" rel="noopener">Portfolio</a></div><% } %>
+              <% if (certs[i].profile.resumeLink) { %><div><a href="<%= certs[i].profile.resumeLink %>" target="_blank" rel="noopener">Resume</a></div><% } %>
+              <% if (certs[i].profile.skills) { %><div>Skills: <%= certs[i].profile.skills %></div><% } %>
+              <% if (certs[i].profile.projectLinks && certs[i].profile.projectLinks.length) { %>
+                <div>Projects:</div>
+                <% for (var p = 0; p < certs[i].profile.projectLinks.length; p++) { %>
+                  <div><a href="<%= certs[i].profile.projectLinks[p] %>" target="_blank" rel="noopener"><%= certs[i].profile.projectLinks[p] %></a></div>
+                <% } %>
+              <% } %>
+            </div>
+          <% } %>
+          <button class="btn recruit-btn" type="button" data-toggle="modal" data-target="#recruitModal" data-certid="<%= certs[i]._id %>">Recruit</button>
+        </div>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <h3 class="section-title">By University</h3>
+    </div>
+  </div>
+  <% for (var u = 0; u < grouped.byUniversity.length; u++) { %>
+    <div class="row">
+      <div class="col-12">
+        <h5 class="section-subtitle"><%= grouped.byUniversity[u].name %></h5>
+      </div>
+    </div>
+    <div class="cert-row">
+      <% for (var j = 0; j < grouped.byUniversity[u].certs.length; j++) { %>
+        <div class="cert-card-wrapper">
+          <a class="cert-card" href="<%= (grouped.byUniversity[u].certs[j].profile && grouped.byUniversity[u].certs[j].profile.profileCode) ? ('/profile/' + grouped.byUniversity[u].certs[j].profile.profileCode) : ('/certificates/' + grouped.byUniversity[u].certs[j]._id) %>">
+            <div class="cert-card-body">
+              <div class="cert-card-title"><%= grouped.byUniversity[u].certs[j].studentName %></div>
+              <div class="cert-card-sub"><%= grouped.byUniversity[u].certs[j].universityName %></div>
+              <div class="cert-card-meta">Major: <%= grouped.byUniversity[u].certs[j].major %></div>
+              <div class="cert-card-meta">Dept: <%= grouped.byUniversity[u].certs[j].departmentName %></div>
+              <div class="cert-card-meta">Issued: <%= grouped.byUniversity[u].certs[j].dateOfIssuing %></div>
+              <div class="cert-card-file"><%= grouped.byUniversity[u].certs[j].certificateFileName %></div>
+            </div>
+          </a>
+          <div class="cert-card-footer">
+          <% if (grouped.byUniversity[u].certs[j].profile) { %>
+            <div class="cert-profile">
+                <a class="profile-avatar" href="/profile/<%= grouped.byUniversity[u].certs[j].profile.profileCode %>">
+                  <% if (grouped.byUniversity[u].certs[j].profile.profileImagePath) { %>
+                    <img src="/student/profile/image?email=<%= grouped.byUniversity[u].certs[j].studentEmail %>" alt="Profile">
+                  <% } else { %>
+                    <span class="avatar-initials"><%= (grouped.byUniversity[u].certs[j].profile.displayName || grouped.byUniversity[u].certs[j].studentName || '').slice(0,1) %></span>
+                  <% } %>
+                </a>
+                <div class="ml-2 font-weight-bold"><a href="/profile/<%= grouped.byUniversity[u].certs[j].profile.profileCode %>"><%= grouped.byUniversity[u].certs[j].profile.displayName || grouped.byUniversity[u].certs[j].studentName %></a></div>
+            </div>
+            <div id="profile-links-u-<%= u %>-<%= j %>" class="collapse mt-2">
+              <% if (grouped.byUniversity[u].certs[j].profile.githubLink) { %><div><a href="<%= grouped.byUniversity[u].certs[j].profile.githubLink %>" target="_blank" rel="noopener">GitHub</a></div><% } %>
+              <% if (grouped.byUniversity[u].certs[j].profile.linkedinLink) { %><div><a href="<%= grouped.byUniversity[u].certs[j].profile.linkedinLink %>" target="_blank" rel="noopener">LinkedIn</a></div><% } %>
+              <% if (grouped.byUniversity[u].certs[j].profile.portfolioLink) { %><div><a href="<%= grouped.byUniversity[u].certs[j].profile.portfolioLink %>" target="_blank" rel="noopener">Portfolio</a></div><% } %>
+              <% if (grouped.byUniversity[u].certs[j].profile.resumeLink) { %><div><a href="<%= grouped.byUniversity[u].certs[j].profile.resumeLink %>" target="_blank" rel="noopener">Resume</a></div><% } %>
+              <% if (grouped.byUniversity[u].certs[j].profile.skills) { %><div>Skills: <%= grouped.byUniversity[u].certs[j].profile.skills %></div><% } %>
+              <% if (grouped.byUniversity[u].certs[j].profile.projectLinks && grouped.byUniversity[u].certs[j].profile.projectLinks.length) { %>
+                <div>Projects:</div>
+                <% for (var pu = 0; pu < grouped.byUniversity[u].certs[j].profile.projectLinks.length; pu++) { %>
+                  <div><a href="<%= grouped.byUniversity[u].certs[j].profile.projectLinks[pu] %>" target="_blank" rel="noopener"><%= grouped.byUniversity[u].certs[j].profile.projectLinks[pu] %></a></div>
+                <% } %>
+              <% } %>
+            </div>
+          <% } %>
+            <button class="btn recruit-btn" type="button" data-toggle="modal" data-target="#recruitModal" data-certid="<%= grouped.byUniversity[u].certs[j]._id %>">Recruit</button>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+
+  <div class="row">
+    <div class="col-12">
+      <h3 class="section-title">By Major</h3>
+    </div>
+  </div>
+  <% for (var m = 0; m < grouped.byMajor.length; m++) { %>
+    <div class="row">
+      <div class="col-12">
+        <h5 class="section-subtitle"><%= grouped.byMajor[m].name %></h5>
+      </div>
+    </div>
+    <div class="cert-row">
+      <% for (var k = 0; k < grouped.byMajor[m].certs.length; k++) { %>
+        <div class="cert-card-wrapper">
+          <a class="cert-card" href="<%= (grouped.byMajor[m].certs[k].profile && grouped.byMajor[m].certs[k].profile.profileCode) ? ('/profile/' + grouped.byMajor[m].certs[k].profile.profileCode) : ('/certificates/' + grouped.byMajor[m].certs[k]._id) %>">
+            <div class="cert-card-body">
+              <div class="cert-card-title"><%= grouped.byMajor[m].certs[k].studentName %></div>
+              <div class="cert-card-sub"><%= grouped.byMajor[m].certs[k].universityName %></div>
+              <div class="cert-card-meta">Major: <%= grouped.byMajor[m].certs[k].major %></div>
+              <div class="cert-card-meta">Dept: <%= grouped.byMajor[m].certs[k].departmentName %></div>
+              <div class="cert-card-meta">Issued: <%= grouped.byMajor[m].certs[k].dateOfIssuing %></div>
+              <div class="cert-card-file"><%= grouped.byMajor[m].certs[k].certificateFileName %></div>
+            </div>
+          </a>
+          <div class="cert-card-footer">
+          <% if (grouped.byMajor[m].certs[k].profile) { %>
+            <div class="cert-profile">
+                <a class="profile-avatar" href="/profile/<%= grouped.byMajor[m].certs[k].profile.profileCode %>">
+                  <% if (grouped.byMajor[m].certs[k].profile.profileImagePath) { %>
+                    <img src="/student/profile/image?email=<%= grouped.byMajor[m].certs[k].studentEmail %>" alt="Profile">
+                  <% } else { %>
+                    <span class="avatar-initials"><%= (grouped.byMajor[m].certs[k].profile.displayName || grouped.byMajor[m].certs[k].studentName || '').slice(0,1) %></span>
+                  <% } %>
+                </a>
+                <div class="ml-2 font-weight-bold"><a href="/profile/<%= grouped.byMajor[m].certs[k].profile.profileCode %>"><%= grouped.byMajor[m].certs[k].profile.displayName || grouped.byMajor[m].certs[k].studentName %></a></div>
+            </div>
+            <div id="profile-links-m-<%= m %>-<%= k %>" class="collapse mt-2">
+              <% if (grouped.byMajor[m].certs[k].profile.githubLink) { %><div><a href="<%= grouped.byMajor[m].certs[k].profile.githubLink %>" target="_blank" rel="noopener">GitHub</a></div><% } %>
+              <% if (grouped.byMajor[m].certs[k].profile.linkedinLink) { %><div><a href="<%= grouped.byMajor[m].certs[k].profile.linkedinLink %>" target="_blank" rel="noopener">LinkedIn</a></div><% } %>
+              <% if (grouped.byMajor[m].certs[k].profile.portfolioLink) { %><div><a href="<%= grouped.byMajor[m].certs[k].profile.portfolioLink %>" target="_blank" rel="noopener">Portfolio</a></div><% } %>
+              <% if (grouped.byMajor[m].certs[k].profile.resumeLink) { %><div><a href="<%= grouped.byMajor[m].certs[k].profile.resumeLink %>" target="_blank" rel="noopener">Resume</a></div><% } %>
+              <% if (grouped.byMajor[m].certs[k].profile.skills) { %><div>Skills: <%= grouped.byMajor[m].certs[k].profile.skills %></div><% } %>
+              <% if (grouped.byMajor[m].certs[k].profile.projectLinks && grouped.byMajor[m].certs[k].profile.projectLinks.length) { %>
+                <div>Projects:</div>
+                <% for (var pm = 0; pm < grouped.byMajor[m].certs[k].profile.projectLinks.length; pm++) { %>
+                  <div><a href="<%= grouped.byMajor[m].certs[k].profile.projectLinks[pm] %>" target="_blank" rel="noopener"><%= grouped.byMajor[m].certs[k].profile.projectLinks[pm] %></a></div>
+                <% } %>
+              <% } %>
+            </div>
+          <% } %>
+            <button class="btn recruit-btn" type="button" data-toggle="modal" data-target="#recruitModal" data-certid="<%= grouped.byMajor[m].certs[k]._id %>">Recruit</button>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<div class="modal fade" id="recruitModal" tabindex="-1" role="dialog" aria-labelledby="recruitModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content recruit-modal">
+      <div class="modal-header">
+        <h5 class="modal-title" id="recruitModalLabel">Send Message</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="recruitForm" method="POST">
+        <div class="modal-body">
+          <div class="whatsapp-card">
+            <div class="whatsapp-bubble">
+              <div class="form-group">
+                <label>Employer Email</label>
+                <input class="form-control form-control-sm" type="text" name="employerEmail" placeholder="you@company.com" required>
+              </div>
+              <div class="form-group">
+                <label>Message</label>
+                <textarea class="form-control form-control-sm" name="employerMessage" rows="2" placeholder="Write a message" required></textarea>
+              </div>
+            </div>
+            <div class="whatsapp-actions">
+              <button class="btn btn-success btn-sm" type="submit">Send</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script>
+  $('#recruitModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var certId = button.data('certid');
+    var form = document.getElementById('recruitForm');
+    if (form && certId) {
+      form.action = '/certificates/' + certId + '/recruit';
+    }
+  });
+</script>

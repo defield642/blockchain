@@ -1,0 +1,288 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Blockchain Certificate</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link rel="stylesheet" href="stylesheets/style.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.10.2/underscore.min.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body class="bg-light rainbow-page student-dashboard-page" data-profile-code="<%= studentProfile.profileCode %>">
+<%- include('partials/navbar-partial.ejs') %>
+
+
+
+
+<div class="container-fluid">
+    <div class="student-layout">
+        <aside class="student-layout__side card student-profile-card student-profile-card-dark">
+            <div class="card-body d-flex justify-content-center">
+                <div class="student-profile-left student-profile-center">
+                    <button type="button" class="profile-avatar profile-avatar-editable" data-toggle="modal" data-target="#profileModal">
+                        <% if (studentProfile && studentProfile.profileImagePath) { %>
+                            <img src="/student/profile/image?email=<%= studentProfile.email %>" alt="Profile">
+                        <% } else { %>
+                            <span class="avatar-initials"><%= (studentProfile.displayName || studentProfile.name || '').slice(0,1) %></span>
+                        <% } %>
+                    </button>
+                    <button type="button" class="profile-edit-icon" data-toggle="modal" data-target="#profileModal" aria-label="Edit profile">✎</button>
+                    <div class="student-profile-name"><%= studentProfile.displayName || studentProfile.name %></div>
+                    <div class="student-profile-code"><%= studentProfile.profileCode %></div>
+                    <div class="student-profile-links student-profile-links-bottom">
+                        <% if (studentProfile.githubLink) { %><div><a href="<%= studentProfile.githubLink %>" target="_blank" rel="noopener">GitHub</a></div><% } %>
+                        <% if (studentProfile.linkedinLink) { %><div><a href="<%= studentProfile.linkedinLink %>" target="_blank" rel="noopener">LinkedIn</a></div><% } %>
+                        <% if (studentProfile.portfolioLink) { %><div><a href="<%= studentProfile.portfolioLink %>" target="_blank" rel="noopener">Portfolio</a></div><% } %>
+                        <% if (studentProfile.resumeLink) { %><div><a href="<%= studentProfile.resumeLink %>" target="_blank" rel="noopener">Resume</a></div><% } %>
+                        <% if (studentProfile.skills) { %><div>Skills: <%= studentProfile.skills %></div><% } %>
+                        <% if (studentProfile.projectLinks && studentProfile.projectLinks.length) { %>
+                            <% studentProfile.projectLinks.forEach(function(link) { %>
+                                <div><a href="<%= link %>" target="_blank" rel="noopener"><%= link %></a></div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                    <button id="shareButton" type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#shareDataModal">Share Profile</button>
+                </div>
+            </div>
+        </aside>
+
+        <section class="student-layout__main">
+    <% if (!certData || !certData.length) { %>
+        <div class="alert alert-info mt-4">No certificates issued yet.</div>
+    <% } %>
+    <% for(var i=0; i < certData.length; i++) { %>
+        <div class="row cert-container card mt-0">
+            <div class="col-sm-12 card-body ">
+                <div class="row text-center upper-row">
+                    <div class="col-sm-4 orange"> <strong>University<br></strong> <%= certData[i].universityName %> </div>
+                    <div class="col-sm-4 orange"><strong>University Email <br></strong> <%= certData[i].universityEmail %></div>
+                    <div class="col-sm-4 orange"><strong>Document <br></strong><%= certData[i].certificateFileName %></div>
+                </div>
+                <div class="row text-center middle-row">
+                    <div class="col-sm-4 orange"> <strong>Dept<br></strong> <%= certData[i].departmentName %></div>
+                    <div class="col-sm-4 orange"><strong>Date Of Issue<br></strong> <%= certData[i].dateOfIssuing %> </div>
+                    <div class="col-sm-4 orange"><strong>Major <br></strong><%= certData[i].major %></div>
+                </div>
+                <div class="row text-center bottom-row">
+                    <div class="col-sm-4 orange"> <strong>Certificate UUID <br></strong> <%= certData[i].certUUID %></div>
+                    <div class="col-sm-4 orange">
+                        <a class="btn btn-outline-success btn-sm" href="/certificates/<%= certData[i].certUUID %>">View</a>
+                        <a class="btn btn-outline-success btn-sm" href="/certificates/<%= certData[i].certUUID %>/download">Download</a>
+                    </div>
+                    <div class="col-sm-4 orange"><strong>Address<br></strong><%= studentProfile.profileCode %></div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-sm-6">
+                        <h6>Transcripts</h6>
+                        <% if (certData[i].transcripts && certData[i].transcripts.length) { %>
+                            <div class="mb-2">
+                                <a class="btn btn-outline-success btn-sm" href="/certificates/<%= certData[i].certUUID %>/transcripts/download-all">Download All (Zip)</a>
+                            </div>
+                            <ul class="list-group">
+                                <% for (var t = 0; t < certData[i].transcripts.length; t++) { %>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Year <%= certData[i].transcripts[t].year %>: <%= certData[i].transcripts[t].fileName %>
+                                        <a class="btn btn-outline-success btn-sm" href="/certificates/<%= certData[i].certUUID %>/transcripts/<%= certData[i].transcripts[t].year %>/download">Download</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        <% } else { %>
+                            <div class="text-muted">No transcripts uploaded.</div>
+                        <% } %>
+                    </div>
+                    <div class="col-sm-6">
+                        <h6>Additional Informations</h6>
+                        <% if (certData[i].additionalInfoNotes) { %>
+                            <div class="mb-2"><%= certData[i].additionalInfoNotes %></div>
+                        <% } else { %>
+                            <div class="text-muted mb-2">No additional notes.</div>
+                        <% } %>
+                        <% if (certData[i].additionalInfoFiles && certData[i].additionalInfoFiles.length) { %>
+                            <ul class="list-group">
+                                <% for (var f = 0; f < certData[i].additionalInfoFiles.length; f++) { %>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <%= certData[i].additionalInfoFiles[f].fileName %>
+                                        <a class="btn btn-outline-success btn-sm" href="/certificates/<%= certData[i].certUUID %>/additional/<%= f %>/download">Download</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+        </section>
+    </div>
+
+
+        <div class="modal fade" id="shareDataModal" tabindex="-1" role="dialog" aria-labelledby="shareDataModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="shareDataModalTitle">Share Profile Address</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-muted">Create your share address and QR code.</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="modalCreateProof" type="button" class="btn btn-primary" data-dismiss="modal">Create Address</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="shareSuccessModal" tabindex="-1" role="dialog" aria-labelledby="shareSuccessModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Proof Generated. Copy Proof Below.</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mt-3">
+                            <label>Share Address</label>
+                            <input id="shareAddress" class="form-control" type="text" readonly>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <div id="shareQr" class="d-inline-block"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="copyProofButton" type="button" class="btn btn-success">Copy Address</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <span id="profileCodeValue" class="d-none"><%= studentProfile.profileCode %></span>
+
+
+        <div class="modal fade" id="shareFailModal" tabindex="-1" role="dialog" aria-labelledby="shareFailModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Error Generating Proof.</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="shareFailModalBody" class="modal-body">
+                        Failed to generate Proof.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content profile-modal-dark">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="profileModalTitle">Update Profile</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/student/profile" method="POST">
+                            <div class="form-group">
+                                <userName>Display Name</userName>
+                                <input name="displayName" type="text" class="form-control" value="<%= studentProfile.displayName || studentProfile.name %>" placeholder="required" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="col form-group">
+                                    <userName>GitHub Link</userName>
+                                    <input name="githubLink" type="url" class="form-control" value="<%= studentProfile.githubLink || '' %>" placeholder="https://github.com/username">
+                                </div>
+                                <div class="col form-group">
+                                    <userName>LinkedIn Link</userName>
+                                    <input name="linkedinLink" type="url" class="form-control" value="<%= studentProfile.linkedinLink || '' %>" placeholder="https://linkedin.com/in/username">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col form-group">
+                                    <userName>Portfolio Link</userName>
+                                    <input name="portfolioLink" type="url" class="form-control" value="<%= studentProfile.portfolioLink || '' %>" placeholder="https://your-portfolio.com">
+                                </div>
+                                <div class="col form-group">
+                                    <userName>Resume Link</userName>
+                                    <input name="resumeLink" type="url" class="form-control" value="<%= studentProfile.resumeLink || '' %>" placeholder="https://drive.google.com/...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <userName>Skills</userName>
+                                <input name="skills" type="text" class="form-control" value="<%= studentProfile.skills || '' %>" placeholder="e.g. React, Node.js, Data Analysis">
+                            </div>
+                            <div class="form-group">
+                                <userName>Project Links</userName>
+                                <textarea name="projectLinks" class="form-control" rows="3" placeholder="one link per line"><%= studentProfile.projectLinks ? studentProfile.projectLinks.join('\n') : '' %></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Save Profile</button>
+                        </form>
+                        <hr>
+                        <form id="profilePictureForm" action="/student/profile/picture" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <userName>Profile Picture</userName>
+                                <input id="profileImageInput" name="profileImage" type="file" class="form-control-file" accept="image/*" required>
+                                <div id="profileImagePreviewWrap" class="mt-2 d-none">
+                                    <div class="small text-muted mb-1">Preview</div>
+                                    <img id="profileImagePreview" class="img-fluid rounded border" alt="Selected image preview">
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="confirm-profile-upload" required>
+                                <label class="form-check-label" for="confirm-profile-upload">I confirm this profile photo is correct.</label>
+                            </div>
+                            <button id="profileUploadButton" type="submit" class="btn btn-outline-success btn-block mt-2" disabled>Upload Photo</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    <!--    <div class="row cert-container card">-->
+    <!--        <div class="col-sm-12 card-body ">-->
+    <!--            <div class="row text-center upper-row">-->
+    <!--                <div class="col-sm-4 orange"> <strong>Name <br></strong> Tasin Ishmam </div>-->
+    <!--                <div class="col-sm-4 orange"><strong>Email <br></strong> tasinishmam@gmail.com </div>-->
+    <!--                <div class="col-sm-4 orange"><strong>CGPA <br></strong> 3.89</div>-->
+    <!--            </div>-->
+    <!--            <div class="row text-center middle-row">-->
+    <!--                <div class="col-sm-4 orange"> <strong>Dept<br></strong> Electrical Engineering</div>-->
+    <!--                <div class="col-sm-4 orange"><strong>Date Of Issue<br></strong> 5-07-2020 </div>-->
+    <!--                <div class="col-sm-4 orange"><strong>Major <br></strong> Computer Science & Engineering</div>-->
+    <!--            </div>-->
+    <!--            <div class="row text-center bottom-row">-->
+    <!--                <div class="col-sm-4 orange"> <strong>Certificate UUID <br></strong> 4d6b9b114db1380bb8b7f035a2982</div>-->
+    <!--                <div class="col-sm-8 orange"><strong>Certificate Hash<br></strong> baadcdecdc3fd9c613d529ffa2982ed8a901943e66bc28934607804a09b68982 </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="/js/dashboardStudent.js"></script>
+</html>

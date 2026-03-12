@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Student Profile</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+<body class="profile-page">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/">Student Profile</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#profileNavbar" aria-controls="profileNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="profileNavbar">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link" href="/certificates">Certificates</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav px-3">
+            <% if (logInType === "student") { %>
+                <li class="nav-item text-nowrap"><a class="nav-link" href="/student/logout">Logout</a></li>
+            <% } else if (logInType === "university") { %>
+                <li class="nav-item text-nowrap"><a class="nav-link" href="/university/logout">Logout</a></li>
+            <% } else { %>
+                <li class="nav-item text-nowrap"><a class="nav-link" href="/verify">Verify</a></li>
+            <% } %>
+        </ul>
+    </div>
+</nav>
+
+<div class="profile-shell">
+    <aside class="profile-side">
+        <div class="profile-side__header">
+            <% if (profile.profileImagePath) { %>
+                <img class="profile-avatar-img" src="/student/profile/image?email=<%= profile.email %>" alt="Profile">
+            <% } else { %>
+                <div class="profile-avatar-fallback"><%= (profile.displayName || profile.name || '').slice(0,1) %></div>
+            <% } %>
+            <div class="student-profile-name"><%= profile.displayName || profile.name %></div>
+            <div class="student-profile-code"><%= profile.profileCode %></div>
+        </div>
+        <div class="profile-side__links">
+            <% if (profile.linkedinLink) { %><div><a href="<%= profile.linkedinLink %>" target="_blank" rel="noopener">LinkedIn</a></div><% } %>
+            <% if (profile.portfolioLink) { %><div><a href="<%= profile.portfolioLink %>" target="_blank" rel="noopener">Portfolio</a></div><% } %>
+            <% if (profile.resumeLink) { %><div><a href="<%= profile.resumeLink %>" target="_blank" rel="noopener">Resume</a></div><% } %>
+            <% if (profile.githubLink) { %><div><a href="<%= profile.githubLink %>" target="_blank" rel="noopener">GitHub</a></div><% } %>
+            <% if (profile.skills) { %><div>Skills: <span class="skills-highlight"><%= profile.skills %></span></div><% } %>
+            <% if (profile.projectLinks && profile.projectLinks.length) { %>
+                <% for (var p = 0; p < profile.projectLinks.length; p++) { %>
+                    <div><a href="<%= profile.projectLinks[p] %>" target="_blank" rel="noopener">Project <%= p + 1 %></a></div>
+                <% } %>
+            <% } %>
+        </div>
+    </aside>
+
+    <main class="profile-main">
+        <% if (verified) { %>
+            <div class="alert alert-success">Proof verified successfully.</div>
+        <% } %>
+
+        <% if (!certs || !certs.length) { %>
+            <div class="alert alert-info">No certificates available for this student profile.</div>
+        <% } else { %>
+            <div class="profile-cert-list">
+                <% for (var i = 0; i < certs.length; i++) { %>
+                    <a class="profile-cert-item <%= selectedCert && selectedCert._id === certs[i]._id ? 'active' : '' %>" href="/profile/<%= profile.profileCode %>?cert=<%= certs[i]._id %>">
+                        <div><strong><%= certs[i].universityName %></strong></div>
+                        <div><%= certs[i].major %> • <%= certs[i].departmentName %></div>
+                    </a>
+                <% } %>
+            </div>
+
+            <% if (selectedCert) { %>
+                <div class="profile-doc-header">
+                    <div><strong>University:</strong> <%= selectedCert.universityName %></div>
+                    <div><strong>Major:</strong> <%= selectedCert.major %></div>
+                    <div><strong>Department:</strong> <%= selectedCert.departmentName %></div>
+                </div>
+            <% } %>
+
+            <% if (selectedCert && selectedCert.transcripts && selectedCert.transcripts.length) { %>
+                <div class="profile-transcript-tabs">
+                    <% for (var t = 0; t < selectedCert.transcripts.length; t++) { %>
+                        <a class="btn btn-sm btn-outline-primary mb-2 <%= selectedTranscript && String(selectedTranscript.year) === String(selectedCert.transcripts[t].year) ? 'active' : '' %>" href="/profile/<%= profile.profileCode %>?cert=<%= selectedCert._id %>&year=<%= selectedCert.transcripts[t].year %>">
+                            Year <%= selectedCert.transcripts[t].year %>
+                        </a>
+                    <% } %>
+                </div>
+            <% } %>
+
+            <div class="viewer-frame">
+                <% if (selectedCert && selectedTranscript) { %>
+                    <% if (selectedTranscriptIsOffice) { %>
+                        <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=<%= encodeURIComponent(selectedTranscriptAbsoluteUrl) %>&wdDownloadButton=False" title="Transcript Document"></iframe>
+                    <% } else if (selectedTranscriptIsPdf) { %>
+                        <iframe src="/certificates/<%= selectedCert._id %>/transcripts/<%= selectedTranscript.year %>/file#toolbar=0&navpanes=0&scrollbar=0" title="Transcript Document"></iframe>
+                    <% } else { %>
+                        <iframe src="/certificates/<%= selectedCert._id %>/transcripts/<%= selectedTranscript.year %>/file" title="Transcript Document"></iframe>
+                    <% } %>
+                <% } else { %>
+                    <div class="p-4 text-muted">No transcript selected.</div>
+                <% } %>
+            </div>
+        <% } %>
+    </main>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+<h1><%= typeof message !== "undefined" && message ? message : "Something went wrong" %></h1>
+<h2><%= typeof error !== "undefined" && error && error.status ? error.status : "" %></h2>
+<pre><%= typeof error !== "undefined" && error && error.stack ? error.stack : "" %></pre>
